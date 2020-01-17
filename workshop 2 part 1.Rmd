@@ -1,0 +1,74 @@
+---
+title: "Workshop 2 part 1"
+author: "katie stansbury"
+date: "1/17/2020"
+output: html_document
+---
+library(nlstools)
+par(mai=c(1,1,0.1,0.1))
+plot(harv$TIMESTAMP, harv$NEE,
+     ylab=expression(paste("NEE (",mu,"mol m"^{-2} ~ s^{-1} ~ ")" )), xlab="")
+plot( NEE ~ PAR, data= day)
+y = nls( NEE ~ (a1 * PAR * ax)/(a1 * PAR + ax) + r, data=day[which(day$MONTH == 07),],
+         start=list(a1= -1 , ax= -1, r= 1),
+         na.action=na.exclude, trace=F, control=nls.control(warnOnly=T))
+summary(y)
+lrcModel <- function(PAR, a1, ax, r) {
+  NEE <- (a1 * PAR * ax)/(a1 * PAR + ax) + r
+  return(NEE)
+}
+lrc.int <- function (mCall, LHS, data){
+  x <- data$PAR
+  y <- data$NEE
+  r <- max(na.omit(y), na.rm=T)
+  ax <- min(na.omit(y), na.rm=T)
+  a1 <- (r + ax)/2
+  a1[a1 > 0]<- -0.1
+  r[r > 50] <- ax*-1
+  r[r < 0] <- 1
+  value = list(a1, ax, r)
+  names(value) <- mCall[c("a1", "ax", "r")]
+  return(value)
+}
+SS.lrc <- selfStart(model=lrcModel,initial= lrc.int) 
+iv <- getInitial(NEE ~ SS.lrc('PAR', "a1", "ax", "r"),
+                 data = day[which(day$MONTH == 07),])
+iv
+y = nls( NEE ~ (a1 * PAR * ax)/(a1 * PAR + ax) + r, day[which(day$MONTH == 07),],
+         start=list(a1= iv$a1 , ax= iv$ax, r= iv$r),
+         na.action=na.exclude, trace=F, control=nls.control(warnOnly=T))
+summary(y)
+res.lrc <- nlsResiduals(y)
+par(mfrow=c(2,2))
+plot(res.lrc, which=1)
+plot(res.lrc, which=3)
+plot(res.lrc, which=4)
+plot(res.lrc, which=5)
+
+results <- nlsBoot(y, niter=100 )
+summary(results)
+plot(results, type = "boxplot")
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
