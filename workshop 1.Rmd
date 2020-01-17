@@ -1,0 +1,25 @@
+---
+title: "Comparison of *Mastogloia calcarea* to water levels in Taylor Slough in the
+  Everglades"
+author: "katie stansbury"
+date: "1/17/2020"
+output: html_document
+---
+
+For this project, I intend to compare the presence of a species of diatom (*Mastogloia calcarea*) to water levels within Taylor Slough in the Everglades.  *M. calcarea* is a diatom that is found throughout the Everglades and is present in most periphyton samples. It secretes a mucilagenous material that encourages the formation of periphyton mats in oligotrophic environments with low phosphorus conditions.  Little is known why this material is secreted by *M. calcarea* or its function, which forms the basis of my project.  
+
+My objectives for this project are to compare water level data taken from Taylor  Slough to diatom counts from Taylor Slough in the Everglades.  I hope to determine if dessication from water level changes will impact the abundance of *M. calcarea*.
+
+My hypothesis is that I expect to find that there will be greater numbers of *M. calcarea* in areas with lower water levels.  Secretion of mucilage serves a number of functions including preventing dessication of the periphyton mat.  This being said, there would be a greater abundance of this diatom in areas with lower water levels.  I also predict that *M. calcarea* abundance will be greater during the dry season in the Everglades.  The dry season is usually during the end of fall, winter, and beginning of spring.  Lack of rainfall decreases the water input into the Everglades, causing a lower water level.
+
+I plan to use data from the UTS project that is collected and counted by Evelyn Gaiser's lab at Florida International University.  For the water level data, I plan to use the data from Wetland Biogeochemistry Institute that is made available by the LTER Network Data Portal (Rivera-Monroy & Castaneda, 2019).
+
+For the statistical analysis of these data, I plan to use multilinear regression in order to compare the *M. calcarea* counts to water level on a gradient.  I will use RStudio to conduct this stastical analysis and then make my data publically available on GitHub and the LTER Network Data Portal.
+
+
+Literature Cited:
+
+Rivera-Monroy V., E. Castaneda. 2019. Water Levels from the Shark River Slough and Taylor Slough, Everglades National Park (FCE), South Florida from May 2001 to Present. Environmental Data Initiative. https://doi.org/10.6073/pasta/95371e60f1580a4739b1cb79cf3a50fe. Dataset accessed 1/10/2020.
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
