@@ -1,0 +1,149 @@
+---
+title: "Workshop 3_Timeseries Models"
+author: "Katie Stansbury"
+date: "1/24/2020"
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, errors = TRUE)
+```
+# Objectives
+The primary objectives of this analysis is to find an environmental variable that closely follows the pattern of NEE in the Florida Everglades.  Variables that closely follow NEE over time could serve as predictors for NEE in this ecosystem.
+
+
+# Methods
+
+```{rinclude=FALSE}
+load("~/Downloads/ARIMA_Workshop.RData")
+
+library(zoo)
+library(tseries)
+library(forecast)
+library(xts)
+
+#Comparing Salinity to NEE
+# Create timeseries objects
+nee <- ts( mangroves$nee, start= 1, frequency=30)
+par(mfrow=c(1,1), mai=c(1.25,0.8,0.2, 0.1))
+plot( nee, typ="l", ylab= "NEE", xlab="")
+# Skewing data (identifies and removes outliars using smoothing and decomposition)
+plot(nee)
+lines(tsclean(nee), col="red")
+nee <- tsclean(nee)
+
+# Decompose the timeseries
+nee.d <- decompose(nee, 'multiplicative')
+plot(nee.d)
+
+# Test for stationarity
+adf.test(nee)
+
+#Detecting autocorellation
+acf(nee, lag.max=45)
+pacf(nee, lag.max=45)
+
+#Fitting an ARIMA Model
+arima.nee1 <-auto.arima(nee, trace=TRUE)
+tsdisplay(residuals(arima.nee1), lag.max=45)
+arima.nee2 <-arima(nee , order=c(10,1,3), seasonal= list(order=c(2,0,2)))
+tsdisplay(residuals(arima.nee2), lag.max= 30)
+AIC(arima.nee1, arima.nee2)
+par(mfrow=c(1,1))
+plot(nee , typ="l"); lines(fitted(arima.nee2),col="red")
+checkresiduals(arima.nee2, lag=36)
+par(mfrow=c(1,1))
+plot(nee , typ="l"); lines(fitted(arima.nee2),col="red")
+plot(forecast(arima.nee2, h=30))
+
+#Comparing Salinity to NEE
+# Create a timeseries object
+sal <- ts(mangroves$salinity.max, start= 1, frequency=30)
+par(mfrow=c(1,1), mai=c(0.25,0.8,0.1, 0.1))
+plot(sal , typ="l", ylab= "Salinity", xlab="")
+plot(sal , typ="l", ylab= "Salinity", xlab="")
+lines(tsclean(sal) , col="red")
+sal <- tsclean(sal)
+
+# Decompose the timeseries
+sal.d <- decompose(sal, 'multiplicative')
+plot(sal.d)
+
+#Test for stationarity
+adf.test(sal)
+# p > 0.05, so we have to differencing the time series
+adf.test(diff(sal))
+
+# Explore correlations
+ccf( diff(sal),nee, na.action = na.pass, lag.max=40, plot=TRUE)
+par(mfrow=c(1,1), mai=c(1.25,0.8,0.1, 0.1))
+arima.nee3 <-auto.arima(nee, xreg=c(diff(sal),0), trace=TRUE)
+AIC(arima.nee2, arima.nee3 )
+#Salinity didn't make the model better, need to look at extreme salinity, so making salinity index to ID when salinity is above a certain point
+sal.i <- sal
+sal.i[sal.i < 25 ]<- 0
+sal.i[sal.i >= 25 ]<- 1
+plot(sal.i)
+arima.nee4 <-auto.arima(nee, xreg=sal.i, trace=TRUE)
+AIC(arima.nee2,arima.nee4 )
+checkresiduals(arima.nee4, lag=36)
+par(mfrow=c(1,1))
+plot(nee , typ="l"); lines(fitted(arima.nee4),col="red")
+
+#Comparing Water Temp Max to NEE
+# Create a timeseries object
+wtm <- ts(mangroves$water.tmax, start = 1, frequency = 30)
+par(mfrow=c(1,1), mai=c(0.25,0.8,0.1, 0.1))
+plot(wtm , typ="l", ylab= "Water Temp Max", xlab="")
+plot(wtm , typ="l", ylab= "Water Temp Max", xlab="")
+lines(tsclean(wtm) , col="red")
+wtm <- tsclean(wtm)
+
+# Decompose the timeseries
+wtm.d <- decompose(wtm, 'multiplicative')
+plot(wtm.d)
+
+#Test for stationarity
+adf.test(wtm)
+adf.test(diff(wtm))
+
+# Explore correlations
+ccf( diff(wtm),nee, na.action = na.pass, lag.max=40, plot=TRUE)
+par(mfrow=c(1,1), mai=c(1.25,0.8,0.1, 0.1))
+arima.nee5 <-auto.arima(nee, xreg=c(diff(wtm),0), trace=TRUE)
+AIC(arima.nee2, arima.nee5 )
+checkresiduals(arima.nee5, lag=36)
+par(mfrow=c(1,1))
+plot(nee , typ="l"); lines(fitted(arima.nee5),col="red")
+```
+
+## Site Information 
+The data of NEE and environmental variables were taken in a mangrove scrub located in the Florida Everglades.  The data for this analysis was collected by an eddy covariance tower in Everglades National Park at the Florida Coastal Everglades Long-term Ecological Research site TS/Ph-7 (Figure 1).  The mangrove dataset used includes NEE, total daily PAR, air temperature, water temperature max, water temperature min, water salinity max, water salinity min, and water salinity.  
+![Everglades picture](~/Downloads/everglades.png)
+**Figure 1** - A map of the Everglades in south Florida.  TS-Ph7 is labeled in blue where all of the data was taken.
+
+## Statistical Analysis
+In this study, I used R Studio to conduct our statistical analysis.  A time series analysis was used to compare NEE to salinity and NEE to water temperature max over time.  In order to compare NEE to salinity, my NEE data needed to be skewed and decomposed to fit the data into an ARIMA model.  For salinity, the data needed to be decomposed, but all salinity data did not make the model better, so I grouped salinity data based on extremes which allowed me to use the extreme values in a model.  Salinity extremes were then fit into an ARIMA model and compared to the NEE ARIMA.  
+For comparing NEE to water temperature maxes, we used the same ARIMA model for NEE as we used for salinity.  The water temperature max data had to be decomposed and then correlation were then explored between the NEE data and water temp max.  The water temperature max data was fit into an ARIMA model and compared to the NEE ARIMA model.
+
+# Results (minimum of 1 plot and one table)
+After comparing time series objects in order to determine which explanatory variable best follows my NEE plot, I found that water temperature max (Figure 2) follows more closely to the NEE trends than salinity extremes (Figure 3) that were plotted before.  For NEE, I received an AIC of 704.7663.  Salinity had an AIC of 700.7734, and water temperature max had an AIC of 697.6469 (Table 1).  Since the AIC of water temperature max was lower than the AIC of salinity, this means that water temperature max follows the NEE plot more closely compared to salinity.
+```{r}
+plot(nee , typ="l", main = "Water Temp Max vs. NEE"); lines(fitted(arima.nee5),col="blue")
+```
+**Figure 2** - Comparison of NEE ARIMA model with salinity extremes ARIMA model.  Salinity extremes do follow a similar trend as NEE, but there are some differences between the two models.
+
+```{r}
+plot(nee , typ="l", main = "Salinity vs. NEE"); lines(fitted(arima.nee4),col="red")
+```
+**Figure 3** - Comparison of NEE ARIMA model and water temperature max ARIMA model.  Water temperature max follows the NEE model more closely than salinity potentially due to water temperature controlling the metabolism of water dwelling organisms.
+
+**Table 1** - Degrees of freedom (df) and AIC values from running the ARIMA models for NEE, salinity extremes, and water temperature max.
+|                              |df|AIC     |
+|------------------------------|--|--------|
+|arima.nee2 (NEE)              |18|704.7663|
+|arima.nee4 (Salinity Extremes)|9 |700.7734|
+|arima.nee5 (Water Temp Max)   |9 |697.6469|
+
+
+# Discussion (1 paragraph)
+This study was used to create a timeseries between salinity and NEE.  The second part of this study was to use the data in order to create a better model than salinity when comparing the variable to NEE.  After conducting the timeseries analysis, I found that using water temperature maximums made a better model than salinity extremes when compared to NEE.  Net ecosystem exchange measures how much carbon is released into the atmosphere versus how much is taken out by a particular ecosystem.  These measurements rely heavily on the metabolism of plants and organisms, which is often controlled by a number of different environmental variables.  Water temperature max controls the metabolism of many organisms that live within and on top of the water column, while salinity may change which organisms can live in water of that salinity.  With this being said, the max temperature of water would have greater control over carbon fluxes in the Everglades since this ecosystem is mostly covered in water.  Most water emptied into the Everglades comes from freshwater sources that originate from north of the Everglades, meaning that salinity does not play a large role in ecosystem metabolism.  Although this may be the case now, sea level rise is increasing the salt water intrusion into the Everglades, which means that salinity may play a larger role in the future as climate change escalates.
