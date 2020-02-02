@@ -1,0 +1,168 @@
+---
+title: "Workshop 4 Markdown"
+author: "Katie Stansbury"
+date: "1/31/2020"
+output:
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Methods
+
+```{r, include=FALSE}
+SDM_Data <- read.csv("~/Desktop/SDM_Data.csv")
+library("sp")
+library("raster")
+library("maptools")
+library("rgdal")
+library("dismo")
+
+# Download bioclim data and store in bioclim.data variable
+bioclim.data <- getData(name = "worldclim",
+                        var = "bio",
+                        res = 2.5,
+                        path = "/Users/ktstans6/downloads")
+
+# Read in saguaro observations
+obs.data <- read.csv(file = "~/Desktop/SDM_Data.csv")
+
+# Drop any rows with NAs
+obs.data <- obs.data[!is.na(obs.data$latitude), ]
+
+# Only pull out those columns of interest and in the order we want them
+obs.data <- obs.data[, c("longitude", "latitude")]
+
+# Determine geographic extent of our data
+max.lat = ceiling(max(obs.data$latitude))
+min.lat = floor(min(obs.data$latitude))
+max.lon = ceiling(max(obs.data$longitude))
+min.lon = floor(min(obs.data$longitude))
+geographic.extent <- extent(x = c(min.lon, max.lon, min.lat, max.lat))
+
+# Crop the bioclim data to geographic extent of saguaro
+bioclim.data <- crop(x = bioclim.data, y = geographic.extent)
+
+# Create pseudo-absence, or background, points
+# Use the bioclim data files for sampling resolution
+bil.files <- list.files(path = "/Users/ktstans6/Downloads/wc2-5", 
+                          pattern = "*.bil$", 
+                          full.names = TRUE)
+
+# We only need one file, so use the first one in the list of .bil files
+mask <- raster(bil.files[1])
+
+# Randomly sample points (same number as our observed points)
+background <- randomPoints(mask = mask,     # Provides resolution of sampling points
+                   n = nrow(obs.data),      # Number of random points
+                   ext = geographic.extent, # Spatially restricts sampling
+                   extf = 1.25)             # Expands sampling a little bit
+
+# Arbitrarily assign group 1 as the testing data group
+testing.group <- 1
+
+# Create vector of group memberships
+group.presence <- kfold(x = obs.data, k = 5) # kfold is in dismo package
+
+# Separate observations into training and testing groups
+presence.train <- obs.data[group.presence != testing.group, ]
+presence.test <- obs.data[group.presence == testing.group, ]
+
+# Repeat the process for pseudo-absence points
+group.background <- kfold(x = background, k = 5)
+background.train <- background[group.background != testing.group, ]
+background.test <- background[group.background == testing.group, ]
+
+# Build a model using training data
+bc.model <- bioclim(x = bioclim.data, p = presence.train)
+
+# Predict presence from model
+predict.presence <- dismo::predict(object = bc.model, 
+                                   x = bioclim.data, 
+                                   ext = geographic.extent)
+
+# Use testing data for model evaluation
+bc.eval <- evaluate(p = presence.test,   # The presence testing data
+                    a = background.test, # The absence testing data
+                    model = bc.model,    # The model we are evaluating
+                    x = bioclim.data)    # Climatic variables for use by model
+
+# Determine minimum threshold for "presence"
+bc.threshold <- threshold(x = bc.eval, stat = "spec_sens")
+
+# Load map data for plotting
+data(wrld_simpl)
+
+# Plot base map
+plot(wrld_simpl, 
+     xlim = c(min.lon, max.lon),
+     ylim = c(min.lat, max.lat),
+     axes = TRUE, 
+     col = "grey95")
+
+# Only plot areas where probability of occurrence is greater than the threshold
+plot(predict.presence > bc.threshold, 
+     add = TRUE, 
+     legend = FALSE, 
+     col = c(NA, "olivedrab"))
+
+# And add those observations
+points(x = obs.data$longitude, 
+       y = obs.data$latitude, 
+       col = "black",
+       pch = "+", 
+       cex = 0.6)
+
+# Redraw those country borders
+plot(wrld_simpl, add = TRUE, border = "grey5")
+box()
+```
+
+## Species Information
+*Carnegiea gigantea* is a cactus species that is native to Sonoran Desert in Arizona, Sonora in Mexico, and the Whipple Mountains and Imperial Counties in California.  It is often called the Saguaro, which is its common name, and can grow up to 40 feet tall.  They can live up to 200 years old, and during this time, they can grow up to 49 arms on a single cactus.  The Saguaro is the state wildflower of Arizona.
+Distribution data taken from Global Biodiversity Information Facility (GBIF) for this species was used for this analysis.  This data was used to look at the species distribution and create a model based on this distribution over space.
+
+## Statistical Analysis
+I used R Studio in order to accomplish the species distribution modeling of the Saguaro.  First, I had to input, clean up and organize the data and then remove N/A from the dataset (Table 1) so that the model could run the data.  Bioclim was downloaded, which was used to model the Saguaro data.  Next, I created pseudo-absence points that were used as reference points where Saguaro was absent.  Then I set up testing and training points for both the actual data points and the pseudo-absence points to plug into the model.  A threshold was set in order to determine the area where Saguaro was most likely to be found.  Finally, a regional map of the distribution of Saguaro was created.
+
+
+# Results
+```{r pressure, echo=FALSE}
+data(wrld_simpl)
+plot(wrld_simpl, 
+     xlim = c(min.lon, max.lon),
+     ylim = c(min.lat, max.lat),
+     axes = TRUE, 
+     col = "grey95")
+plot(predict.presence > bc.threshold, 
+     add = TRUE, 
+     legend = FALSE, 
+     col = c(NA, "olivedrab"))
+points(x = obs.data$longitude, 
+       y = obs.data$latitude, 
+       col = "black",
+       pch = "+", 
+       cex = 0.6)
+plot(wrld_simpl, add = TRUE, border = "grey5")
+box()
+```
+**Figure 1**: Bioclim map of the distribution of *C. gigantea* across the southwestern United States and northwestern Mexico.
+
+**Table 1**: Values for quartiles of latitude, longitude, and gbifid after removing the N/A's from the observational data.
+
+|      gbifid       |   latitude    |    longitude   |  
+| ----------------- | ------------- | -------------- |   
+| Min.   :8.910e+08 | Min.   :26.78 | Min.   :-114.0 |  
+| 1st Qu.:1.453e+09 | 1st Qu.:32.17 | 1st Qu.:-111.4 |  
+| Median :1.571e+09 | Median :32.28 | Median :-111.1 |  
+| Mean   :1.575e+09 | Mean   :32.16 | Mean   :-111.3 |  
+| 3rd Qu.:1.677e+09 | 3rd Qu.:32.38 | 3rd Qu.:-111.0 |  
+| Max.   :1.806e+0  | Max.   :34.80 | Max.   :-109.3 | 
+
+After running the bioclim model with training and testing points for the latitidunal and longitudinal data (Table 1) and the pseudo-absence points, I was able to successfully map the distribution of the Saguaro across the United States and Mexico (Figure 1).  The range from the bioclim model shows that the Saguaro thrives in desert regions somewhat close to the coast.
+
+
+# Discussion
+After modeling the spatial species data for *C. gigantea*, I found that this species of cactus's range is in the southwestern United States (Arizona and California) and northwestern Mexico.  This is a very desert-like area with an arid climate, which explains why it is useful for the Saguaro to store water as it lives in a climate where water is scarce.  My results support previous research on the distribution of the Saguaro in southwestern United States and northwestern Mexico.  This kind of modeling is useful to look at how species distributions change over time.  Global climate change is playing a large role on the distribution of species all over the world, and bioclim modeling can help to track how different variables are affecting the distribution of sensitive species as these variables change.
