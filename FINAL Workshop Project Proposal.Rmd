@@ -1,0 +1,20 @@
+---
+title: Comparing *Mastogloia calcarea* abundance, *Encyonema evergladianum* abundance, and ash free dry weight
+author: "Katie Stansbury"
+date: "2/6/2020"
+output:
+  html_document: default
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+For this project, I intend to compare the abundance of the diatom *Mastogloia calcarea* to ash free dry weight (AFDW) of periphyton mats.  *M. calcarea* is a diatom that is found throughout the Everglades and is present in most periphyton samples. It secretes a extreacellular polysaccharide (EPS) that encourages the formation of periphyton mats in oligotrophic environments with low phosphorus conditions.  After looking at this relationship between *M. calcarea* abundance to AFDW, I would like to compare these results with another diatom found in the Everglades, *Encyonema evergladianum*.  This would entail comparing AFDW of mats with a higher abundance of *M calcarea* to the AFDW of periphyton mats with a higher abundance of *E. evergladianum*.  *E. evergladianum* is a freshwater diatom that does not produce EPS like *M. calcarea* and is present in most periphyton mats within the Everglades.
+
+My objectives for this project are to compare *M. calcarea* abundance to its AFDW with data taken from periphyton mats in Taylor Slough in the Everglades.  After this, I plan to compare this to *E. evergladianum* abundance and its AFDW from Taylor Slough to attempt to determine how much mat biomass is made up of EPS.
+
+My hypothesis is that I expect to find that periphyton mats containing a greater abundance of *M. calcarea* will have a higher AFDW and that *M. calcarea* mats will have a higher AFDW than periphyton mats with a greater abundance of *E. evergladianum*.  Secretion of EPS serves serves to aggregate periphyton mats and makes up 90% of the periphyton mat.  This being said, there shoud be a higher AFDW for periphyton mats with a higher abundance of *M. calcarea*.  Without *M. calcarea* secreting EPS, mats do not aggregate as efficiently, thus samples with higher abundances of *E. evergladianum* should have a lower ash free dry mass.
+
+I plan to use periphyton mat data from the Coastal Everglades Restoration Plan (CERP) that has been collected, processed, and ] counted by Evelyn Gaiser's lab at Florida International University.  
+
+For the statistical analysis of these data, I plan to use nonlinear regression in order to compare the *M. calcarea* abundance to its AFDW and to compare mats with higher *M. calcarea* abundance AFDW to mats with higher *E. evergladianum* abundance AFDW.  I will use RStudio to conduct this stastical analysis and then make my data publically available on GitHub and the LTER Network Data Portal.
