@@ -1,0 +1,210 @@
+---
+title: "*Mastogloia calcarea*, *Encyonema evergladianum*, and Ash Free Dry Mass in the Everglades"
+author: "Katie Stansbury"
+date: "4/3/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+  The Everglades is a relatively young (about 5,000 years old) wetland ecosystem located in southern Florida (Gleason & Stone 1994).  While there are other ecosystems within the Caribbean that are similar to the Everglades, this ecosystem is also very unique.  It is an oligotrophic wetland with calcium carbonate and phosphorus as its most important nutrients (Davis 1994; Noe, Childers, & Jones 2001; McCormick et al. 2002; Gaiser et al. 2012). The Everglades sits on top of bedrock made of limestone, which contributes to the overall importance of calcium carbonate (National Park Service 2018).  The geological setting allows for the neutralization of acidic water transported into the ecosystem, while dissolved calcium carbonate is taken up by periphyton mats and transformed into marl soil which covers an extensive portion of the Everglades (Light & Dineen 1994; Slate & Stevenson 2000; Childers et al. 2003).
+  
+  Since this ecosystem is oligotrophic, the Everglades is severely phosphorus limited.  Total phosphorus concentration determines what species can survive where.  Changes in phosphorus concentrations creates shifts in the composition of periphyton mats, which then leads to shifts higher up in the food web due to changes in the nutritional value of the base of the food web (Davis 1994).  Over the past several decades, agricultural nutrient input has increased which increases phosphorus input to this watershed (Davis 1994).  Thus, understanding how organisms within this ecosystem function and how they are changing due to anthropogenic development allows for management to determine strategies in order to help the return of Everglades back to its original state.
+ 
+  Periphyton plays a crucial role in the functioning of the Everglades ecosystem.  It is defined as the aggregation of a diverse group of microorganisms and particles that are imbedded in an extracellular matrix secreted by algal species (Hagerthey et al. 2011; Kuhl et al. 1994).  This aggregation of living organisms and materials forms the base of the food web that supports the majority of life within this ecosystem.  It also covers much of the ecosystem, with biomasses between 3 to 6235 g AFDM/m^2, and makes up a good portion of the gross primary production in this area (Goldsborough & Robertson 1996).  Changes in the water chemistry of the Everglades has an immediate effect on the composition of periphyton mats, which is why these mats are often used as bioindicators on the health of this environment (Gaiser et al. 2011).
+ 
+  Some species of algae are crucial to the formation of periphyton mats.  Two of these species would be *Encyonema evergladianum* and *Mastogloia calcarea* (Cunningham et al. 2004; Slate and Stevenson 2007; La Hée and Gaiser 2012).   Both are diatoms that serve as bioindicators due to their sensitivity to elevated phosphorus concentrations.  As phosphorus increases, *E. evergladianum* and *M. calcarea* abundances begin to dissipate, and periphyton mats disaggregate (Gaiser et al. 2011).  In addition to this, *M. calcarea* differs from *E. evergladianum* because it secretes an extracellular polymeric material (mucilage) that aids in the aggregation of periphyton mats (Gaiser et al. 2010).  Increasing phosphorus concentrations has shown to decrease *M. calcarea* abundances, which means less secretion of mucilage and a dissipation of periphyton mats (Gaiser et al. 2011).  Understanding how much of this mucilage is excreted can help researchers understand the magnitude of the role that M. calcarea plays in the Everglades ecosystem.
+  
+  The Comprehensive Everglades Restoration Plan (CERP) is one of the largest ecosystem restoration projects in the United States that started in 2000 and has a 35+ year timeline (National Park Service 2019).  One of the areas of research within this project is to use periphyton algal species as a bioindicator for water quality changes over time.  Using this data, I compared ash free dry mass (AFDM) to *M. calcarea* dominated mats and AFDM to *E. evergladianum* dominated mats.  I hypothesized that mats dominated by *E. evergladianum* will increase in AFDM as relative abundance increases, but mats dominated by *M. calcarea* will have a more complex relationship due to the secretion of mucilage.  I used the periphyton sample data and environmental data within the CERP database to conduct these analyses.  AFDM percentage and relative abundances of both species were analyzed using a quadratic model in order to find a correlation between both variables.
+
+
+
+# Methods
+
+```{r, include=FALSE}
+
+#Encyonema evergladianum analysis
+
+eevergladianum <- c(40.80145719,60.9375,57.48031496,55.25846702,44.96124031,50.67178503,57.69980507,30.46875,48.57142857,59.16030534,43.54527938,45.88235294,28.24427481,45.55984556,41.37931034,47.61904762,50.19762846,58.61386139,10.5065666,56.37065637,51.82341651,38.996139,29.98102467,36.04651163,34.28571429,32.4853229,41.86046512,61.74757282,51.57480315,51.48514851,41.26984127,55.81395349,14.11764706,41.69741697,44.31137725,49.82698962,63.39622642,56.20155039,32.14285714,13.92649903,60.61776062,49.35543278,59.96204934,28.13688213,52.21518987,34.68634686,11.28404669,44.31372549,32.55813953,34.50980392,27.13754647,21.69625247,41.72932331,74.7553816,51.3562387,29.4017094,42.043222,38.51851852,57.53424658,41.50197628,32.29571984,49.80694981,43.29501916,45.21072797,42.91338583,47.265625,53.84615385,40.57971014,32.01581028,40,49.04214559,55.2238806,42.30769231,48.65900383,37.83783784,31.93612774,24.65208748,44.44444444,51.48148148,27.45825603,60.83499006,56.81381958,40,37.59689922,32,70.87198516,41.55844156,47.41035857,21.9123506,43.87351779,35.90733591,62.88659794,48.96551724,33.58208955,42.16634429,42.88425047,33.08823529,59.93031359,38.82783883,55.55555556,40.78431373,53.66795367,39.76143141,37.38317757,60.91954023,54.19847328,52.54901961,35.24752475,36.71875,35.79766537)
+eevergladianumafdwpercent <- c(58.86951293,34.27220179,31.37589621,65.728,58.52213315,67.15766503,60.91581869,35.13257576,50.87001024,40.01843318,48,34.1804683,91.26832377,30.20677894,34.70057424,33.31373702,35.17264726,45.77932343,75.50943396,43.54702657,34.86731094,49.38752784,39.95584989,49.23215899,30.18945634,31.53094463,36.90535804,53.02111138,37.06008365,58.18181818,37.77913735,59.67006729,85.80071174,41.66666667,27.60459136,80.2742616,46.7216873,51.82744158,27.17027109,36.81457431,41.44535651,37.71011298,41.53306613,63.23794792,51.27919911,40.31545741,42.18192931,33.98779517,30.68662173,43.88036956,87.7753304,31.57340926,48.85598923,56.40966094,38.58954041,88.08120498,30.58769932,32.3574969,58.63954506,42.61962693,69.87951807,28.79380009,34.10324289,64.26764127,36.16917247,35.24683502,45.92487597,86.44820883,45.47998278,88.79202989,66.59305994,59.51535408,35.0264779,89.39592295,34.478381,35.87605774,35.66918754,88.67268937,36.44566181,36.66542335,44.11594203,77.64261745,50.33382789,51.85377236,32.46305419,67.85343934,72.4033686,43.07913669,30.60299083,52.54599212,41.67234719,67.84774872,73.58925144,46.27290738,54.24981523,42.605387,39.22091235,57.21187026,73.74815906,58.13795447,42.06378987,52.1557213,34.60194752,81.51128996,39.12233299,34.5823307,77.6802049,32.25181921,51.91166322,42.25629484)
+eevergladianumdata <- data.frame(eevergladianum, eevergladianumafdwpercent)
+plot(eevergladianumafdwpercent, eevergladianum, main = "*E. evergladianum* Relative Abundance vs. AFDM Percentage", xlab = "AFDM Percentage", ylab = "Relative Abundance", xlim = c(0,100), ylim = c(0,100))
+
+linear.model.ee <- lm(eevergladianumafdwpercent ~ eevergladianum)
+summary(linear.model.ee)
+### Cannot fit linear model
+
+exponential.modelee <- lm(log(eevergladianumafdwpercent)~ eevergladianum)
+summary(exponential.modelee)
+### Cannot fit exponential model
+
+eevergladianumafdm2 <- eevergladianumafdwpercent^2
+quadratic.modelee <-lm(eevergladianum ~ eevergladianumafdwpercent + eevergladianumafdm2)
+summary(quadratic.modelee)
+### Weak correlation for quadratic model and pvalue <0.05
+
+library(dplyr)
+library(tidyverse)
+library(caret)
+model <- lm(eevergladianum ~ poly(eevergladianumafdwpercent, 2, raw = TRUE), data = eevergladianumdata)
+predictions <- model %>% predict(eevergladianumdata)
+data.frame(
+  RMSE = RMSE(predictions, eevergladianumdata$eevergladianum),
+  R2 = R2(predictions, eevergladianumdata$eevergladianum)
+)
+eeplot <- ggplot(eevergladianumdata, aes(eevergladianumafdwpercent, eevergladianum) ) +
+  geom_point() +
+  stat_smooth(method = lm, formula = y ~ poly(x, 5, raw = TRUE))
+eeplot + scale_x_continuous(name="AFDM Percentage", limits=c(25, 100)) +
+  scale_y_continuous(name="Relative Abundance", limits=c(0, 100)) +ggtitle("Relative E. evergladianum Abundance versus AFDM Percentage")
+
+# Mastogloia calcarea analysis
+
+mcalcarea <- c(27.83882784,33.39658444,45.47206166,17.37451737,28.74251497,62.40310078,56.60377358,52.83757339,31.61764706,59.39849624,67.3040153,66.28571429,36.25730994,35.71428571,40.22346369,23.32695985,33.52826511,50.92250923,69.98011928,50.3875969,50.52631579,47.1042471,68.60465116,34.64566929,34.48275862,39.68589514,33.33333333,47.61904762,47.70992366,5.405405405,23.87475538,46.74329502,47.52851711,49.41176471,35.41666667,33.07086614,66.41929499,57.80346821,57.35294118,62.57425743,49.23664122,47.83427495,34.42940039,41.00580271,42.51968504,46.15384615,19.31818182)
+mcalcareaafdwpercent <- c(50.27072053,31.06475148,68.95059502,82.23329182,29.07054871,30.0390625,58.95879911,52.40447958,58.85933996,86.35551586,66.01583113,44.57917261,29.4222338,66.05316973,52.81447444,72.07334274,48.42820731,47.95008913,82.17687075,36.89223058,68.9048474,34.04255319,79.25892454,30.54514871,62.55280628,30.6122449,59.65734896,38.27586207,54.29635541,72.1197212,87.7318117,87.73281952,30.95573283,86.53702319,67.46629659,29.28915663,48.82154882,59.36111111,67.91044776,82.97981089,60.12030564,36.82849184,34.70728225,42.66700793,39.03556034,81.89126296,77.07061901)
+mcalcareadata <- data.frame(mcalcarea,mcalcareaafdwpercent)
+plot(mcalcareaafdwpercent,mcalcarea, main = "*M. calcarea* Relative Abundance vs. AFDM Percentage", xlab = "AFDM Percentage", ylab = "Relative Abundance", xlim = c(0,100), ylim = c(0,100))
+
+logmcafdm <- log(mcalcareaafdwpercent)
+linear.model.mc <- lm(mcalcarea ~ logmcafdm)
+summary(linear.model.mc)
+### Cannot fit a linear model
+
+exponential.modelmc <- lm(log(mcalcareaafdwpercent)~ mcalcarea)
+summary(exponential.modelmc)
+### Cannot fit exponential model
+
+mcalcareaafdm2 <- mcalcareaafdwpercent^2
+quadratic.modelmc <-lm(mcalcarea ~ mcalcareaafdwpercent + mcalcareaafdm2)
+summary(quadratic.modelmc)
+### Cannot fit quadratic model
+```
+
+  I used the 2016 and 2017 data from the Comprehensive Everglades Restoration Plan (CERP) in order to compare AFDM to *Mastogloia calcarea* and *Encyonema evergladianum* relative abundances.  These data were collected during the 2016 and 2017 wet season in the Everglades located in southern Florida (Figure 1).  Periphyton samples were taken from over 150 sites throughout the Everglades and were then processed in the Giaser lab at Florida International University.  A portion of each sample was made into slides where soft algal species and diatom species were counted, while the rest was measured out to determine chlorophyl a and nutrient concentrations.
+  
+```{r, out.width = "400px", echo=FALSE}
+knitr::include_graphics("/Users/ktstans6/Desktop/CERP map.png")
+```
+**Figure 1:** Map of the area that CERP focuses on.  Sampling sites for the data used were located primarily in the southern portion of the CERP map.
+
+
+  Within these data, I used total phosphorus concentration, periphyton dry weight, periphyton ash free dry weight, total diatom counts, *E. evergladianum* counts, and *M. calcarea* counts.  Phosphorus concentration was used as a threshold to determine which samples to use.  Samples that had total phosphorus concentrations greater than 500 ug/g were filtered out of the usable data.  High total phosphorus levels are uncommon in the Everglades since it is an oligotrophic ecosystem, and most samples above this threshold had very little to no *E. evergladianum* or *M. calcarea*.  Periphyton dry weight and periphyton ash free dry weight were used to standardize ash free dry weight for each sample since samples did not have the same total dry weight.  These values were used to calculate the percentage of ash free dry weight compared to the original dry weight of the sample.  Relative abundances were calculated for *E. evergladianum* counts and *M. calcarea* counts using the total diatom counts.  This allowed for all values to be standardized, as not all samples had the same total diatom count.  Also, there was a number of other species of diatoms that varied in relative abundance for each sample.  After relative abundance was calculated, samples with a less than 5% difference in *E. evergladianum* abundance and *M. calcarea* abundance were filtered out.  Similar abundances between the two species could skew the AFDM percentage for each species because both species would make up roughly equal parts of the AFDM rather than comparing AFDM for samples dominated by one species over the other. The data was then sorted into *E. evergladianum* dominated samples or *M. calcarea* dominated samples.
+
+In order to conduct my analysis, I used R studio.  The sorted data with *E. evergladianum* abundance versus AFDM and *M. calcarea* abundance versus AFDM were entered into a data frame in R studio.  *E. evergladianum* dominated samples and *M. calcarea* dominated samples were plotted against the AFDM for each sample to determine a relationship between relative abundance and AFDM for each species.  In order to find the relationship between each species and AFDM, a number of different models were tested to see which would best explain the relationship between abundance and AFDM. I attempted to fit a linear model, exponential model, and quadratic model to both species.  Overall, the quadratic model fit the data best and was used to describe the relationships.
+
+
+
+# Results
+
+After attempting to fit a number of different models to both species, I found that the only model to show a correlation was a quadratic model.  For *E. evergladianum*, the linear and exponential model did not fit the data, and this relationship was also not significant (Table 1).  I was able to fit a quadratic model to this data (Figure 2).  This model gave a weak correlation (R^2 = 0.1282) between relative *E. evergladianum* abundance and AFDM (Table 1).  The quadratic model also showed that the relationship was significant between relative abundance and AFDM (p value = 0.0006493) (Table 1).
+
+
+**Table 1:** Statistical values for three models attempting to fit the data for *E. evergladianum*.
+
+|                     | R^2 Value   | F Statistic   | P Value     |
+| ------------------- | ----------- | ------------- | ----------- |
+| Linear Model        | 0.0008673   | 0.09375       | 0.7601      |
+| Exponential Model   | 0.006564    | 0.7136        | 0.4001      |
+| Quadratic Model     | 0.1282      | 7.867         | 0.0006493   | 
+
+
+```{r, echo=FALSE}
+eevergladianum <- c(40.80145719,60.9375,57.48031496,55.25846702,44.96124031,50.67178503,57.69980507,30.46875,48.57142857,59.16030534,43.54527938,45.88235294,28.24427481,45.55984556,41.37931034,47.61904762,50.19762846,58.61386139,10.5065666,56.37065637,51.82341651,38.996139,29.98102467,36.04651163,34.28571429,32.4853229,41.86046512,61.74757282,51.57480315,51.48514851,41.26984127,55.81395349,14.11764706,41.69741697,44.31137725,49.82698962,63.39622642,56.20155039,32.14285714,13.92649903,60.61776062,49.35543278,59.96204934,28.13688213,52.21518987,34.68634686,11.28404669,44.31372549,32.55813953,34.50980392,27.13754647,21.69625247,41.72932331,74.7553816,51.3562387,29.4017094,42.043222,38.51851852,57.53424658,41.50197628,32.29571984,49.80694981,43.29501916,45.21072797,42.91338583,47.265625,53.84615385,40.57971014,32.01581028,40,49.04214559,55.2238806,42.30769231,48.65900383,37.83783784,31.93612774,24.65208748,44.44444444,51.48148148,27.45825603,60.83499006,56.81381958,40,37.59689922,32,70.87198516,41.55844156,47.41035857,21.9123506,43.87351779,35.90733591,62.88659794,48.96551724,33.58208955,42.16634429,42.88425047,33.08823529,59.93031359,38.82783883,55.55555556,40.78431373,53.66795367,39.76143141,37.38317757,60.91954023,54.19847328,52.54901961,35.24752475,36.71875,35.79766537)
+eevergladianumafdwpercent <- c(58.86951293,34.27220179,31.37589621,65.728,58.52213315,67.15766503,60.91581869,35.13257576,50.87001024,40.01843318,48,34.1804683,91.26832377,30.20677894,34.70057424,33.31373702,35.17264726,45.77932343,75.50943396,43.54702657,34.86731094,49.38752784,39.95584989,49.23215899,30.18945634,31.53094463,36.90535804,53.02111138,37.06008365,58.18181818,37.77913735,59.67006729,85.80071174,41.66666667,27.60459136,80.2742616,46.7216873,51.82744158,27.17027109,36.81457431,41.44535651,37.71011298,41.53306613,63.23794792,51.27919911,40.31545741,42.18192931,33.98779517,30.68662173,43.88036956,87.7753304,31.57340926,48.85598923,56.40966094,38.58954041,88.08120498,30.58769932,32.3574969,58.63954506,42.61962693,69.87951807,28.79380009,34.10324289,64.26764127,36.16917247,35.24683502,45.92487597,86.44820883,45.47998278,88.79202989,66.59305994,59.51535408,35.0264779,89.39592295,34.478381,35.87605774,35.66918754,88.67268937,36.44566181,36.66542335,44.11594203,77.64261745,50.33382789,51.85377236,32.46305419,67.85343934,72.4033686,43.07913669,30.60299083,52.54599212,41.67234719,67.84774872,73.58925144,46.27290738,54.24981523,42.605387,39.22091235,57.21187026,73.74815906,58.13795447,42.06378987,52.1557213,34.60194752,81.51128996,39.12233299,34.5823307,77.6802049,32.25181921,51.91166322,42.25629484)
+eevergladianumdata <- data.frame(eevergladianum, eevergladianumafdwpercent)
+eevergladianumafdm2 <- eevergladianumafdwpercent^2
+quadratic.modelee <-lm(eevergladianum ~ eevergladianumafdwpercent + eevergladianumafdm2)
+library(dplyr)
+library(tidyverse)
+library(caret)
+model <- lm(eevergladianum ~ poly(eevergladianumafdwpercent, 2, raw = TRUE), data = eevergladianumdata)
+predictions <- model %>% predict(eevergladianumdata)
+eeplot <- ggplot(eevergladianumdata, aes(eevergladianumafdwpercent, eevergladianum) ) +
+  geom_point() +
+  stat_smooth(method = lm, formula = y ~ poly(x, 5, raw = TRUE))
+eeplot + scale_x_continuous(name="AFDM Percentage", limits=c(25, 100)) +
+  scale_y_continuous(name="Relative Abundance", limits=c(0, 100)) +ggtitle("Relative E. evergladianum Abundance versus AFDM Percentage")
+```
+**Figure 2:** Comparison of the relative abundance of *E. evergladianum* to AFDM percentage in 2016 and 2017 CERP periphyton data.  The data has been fit to a quadratic model with the equation y = -1.45+(1.75x)-(0.0151*x^2).
+
+
+*M. calcarea* was plotted using a scatter plot to determine the relationship between relative abundance and AFDM (Figure 3).  None of the three models that I had used to determine the relationship for *E. evergladianum* data fit the *M. calcarea* data.  All of the R^2 values were low, and none of the relationships were significant (Table 2).  I attempted to transform the data by taking the log or square root of each variable and was still unable to find a model to fit this data.
+
+```{r, echo=FALSE}
+mcalcarea <- c(27.83882784,33.39658444,45.47206166,17.37451737,28.74251497,62.40310078,56.60377358,52.83757339,31.61764706,59.39849624,67.3040153,66.28571429,36.25730994,35.71428571,40.22346369,23.32695985,33.52826511,50.92250923,69.98011928,50.3875969,50.52631579,47.1042471,68.60465116,34.64566929,34.48275862,39.68589514,33.33333333,47.61904762,47.70992366,5.405405405,23.87475538,46.74329502,47.52851711,49.41176471,35.41666667,33.07086614,66.41929499,57.80346821,57.35294118,62.57425743,49.23664122,47.83427495,34.42940039,41.00580271,42.51968504,46.15384615,19.31818182)
+mcalcareaafdwpercent <- c(50.27072053,31.06475148,68.95059502,82.23329182,29.07054871,30.0390625,58.95879911,52.40447958,58.85933996,86.35551586,66.01583113,44.57917261,29.4222338,66.05316973,52.81447444,72.07334274,48.42820731,47.95008913,82.17687075,36.89223058,68.9048474,34.04255319,79.25892454,30.54514871,62.55280628,30.6122449,59.65734896,38.27586207,54.29635541,72.1197212,87.7318117,87.73281952,30.95573283,86.53702319,67.46629659,29.28915663,48.82154882,59.36111111,67.91044776,82.97981089,60.12030564,36.82849184,34.70728225,42.66700793,39.03556034,81.89126296,77.07061901)
+mcalcareadata <- data.frame(mcalcarea,mcalcareaafdwpercent)
+plot(mcalcareaafdwpercent,mcalcarea, main = "*M. calcarea* Relative Abundance vs. AFDM Percentage", xlab = "AFDM Percentage", ylab = "Relative Abundance", xlim = c(0,100), ylim = c(0,100))
+```
+**Figure 3:** Scatter plot of the relative abundance of *M. calcarea* to AFDM percentage.  Several models were tested to fit this data, but there is no clear correlation or relationship when trying to fit a linear, exponential, or quadratic model.
+
+
+
+**Table 2:** Statistical values for three models attempting to fit the data for *M. calcarea*.
+
+|                     | R^2 Value   | F Statistic   | P Value     |
+| ------------------- | ----------- | ------------- | ----------- |
+| Linear Model        | 0.00328     | 0.1481        | 0.7022      |
+| Exponential Model   | 0.00328     | 0.1481        | 0.7022      |
+| Quadratic Model     | 0.005297    | 0.1172        | 0.8897      | 
+
+
+
+# Discussion
+
+After attempting to fit a model to both *E. evergladianum* and *M. calcarea* dominated samples compared to AFDM, I was able to fit a quadratic model to the *E. evergladianum* abundance versus AFDM data.  Linear and exponential models did not show any correlation, but the quadratic model fit the data and showed a weak correlation between the two variables (R^2 = 0.1282, p value = 0.0006493) (Table 1).  Transformations of the data did not improve the models.  While only a weak correlation was found, this makes sense given the nature of periphyton mats.  These mats consist of a variety of different organisms, including different species of algae, zooplankton, invertebrates, microbial communities, etc. (Kuhl et al. 1994).  *E. evergladianum* is not the only organism contributing to mat biomass so this explains why there is not a stronger correlation.  In addition to this, this diatom does not produce extracellular material based on external environmental factors, so there is more of a direct relationship with cell volume and biomass in comparison to species that do produce this material like *M. calcarea*.  
+
+I attempted to fit a linear, exponential, and quadratic model to the *M. calcarea* dominated mats versus AFDM , and none of the models showed a correlation between the two variables (Table 2).  Even after using transformations within the models, no relationships could be found.  The lack of correlation could be due to a combination of reasons.  First, like previously mentioned, there are more organisms/particles than just *M. calcarea* that make up the total biomass of periphyton mats in the Everglades.  Second, *M. calcarea* secretes the mucilaginous material that helps to aggregate periphyton mats (Gaiser et al. 2010).  This material may be the main cause of the range in AFDM for different samples.  Differences in phosphorus concentration may lead to differences in cell abundances as well as mucilage secretion (Gaiser et al. 2011).  Previous studies have found that phosphorus concentrations may dictate how much mucilage is secreted by *M. calcarea* (Alcoverro et al. 2008; Sundareshwar et al. 2011).  With this being said, each periphyton sample is taken from a different site either in 2016 or 2017 for this analysis, and each site differs in its total phosphorus concentrations.  For future work, I suggest comparing AFDM and *M. calcarea* relative abundances at similar phosphorus concentrations.  This would give a more direct relationship on how much mucilage contributes to AFDM over a range of relative abundances.
+
+Overall, it is difficult to determine AFDM relationships based on one species' relative abundance since there are many other organisms and particles that contribute to the composition of periphyton mats within the Everglades.  Understanding each species’ contribution to the health of periphyton mats and the products that they produce will help researchers to better understand how a large portion of the Everglades ecosystem functions.  This understanding will allow for the development for better management practices in order to help this environment return back to its natural state.
+
+
+
+# Literature Cited
+
+
+Alcoverro, T., Conte, E. & Mazzella, L. (2000). Production of Mucilage by the Adriatic Epipelic Diatom Cylindrotheca Closterium (bacillariophyceae) Under Nutrient Limitation. Journal of Phycology, 36: 1087–1095.
+
+Childers, D. L., Doren, R. F., Jones, R., Noe, G. B., Rugge, M., & Scinto, L. J. (2003). Decadal change in vegetation and soil phosphorus pattern across the Everglades landscape. J. Environ. Qual., 32: 344–362.
+
+Cunningham, K. J., Carlson, J. I., & Hurley, N. F. (2004). New method for quantification of vuggy porosity from digital optical borehole images as applied to the karstic Pleistocene limestone of the Biscayne aquifer, southeastern Florida. Journal of Applied Geophysics, 55(1–2): 77–90. 
+
+Davis, S.M. (1994) Phosphorous inputs and vegetation sensitivity in the Everglades. In: Everglades: The Ecosystem and Its Restoration (Eds S.M. Davis & J.C. Ogden), pp. 357–378. St. Lucie Press, Delray Beach.
+
+Gaiser, E., Hée, J. M. L., Tobias, F. A. C., & Wachnicka, A. H. (2010). Mastogloia smithii var lacustris Grun.: a structural engineer of calcareous mats in karstic subtropical wetlands. ANSP, 160(1): 99–112. 
+
+Gaiser, E. E., McCormick, P. V., Hagerthey, S. E., & Gottlieb, A. D. (2011). Landscape patterns of periphyton in the Florida Everglades. Critical Reviews in Environmental Science and Technology, 41(S1): 92–120. 
+
+Gaiser, E. E., Trexler, J. C., & Wetzel, P. R. (2012). The Florida Everglades. Wetland Habitats of North America Ecology and Conservation Concerns; Batzer, D., Baldwin, A., Eds.
+
+Gleason, P. J., & Stone, P. (1994). Age, origin, and landscape evolution of the Everglades peatland. In Everglades: The ecosystem and its restoration (pp. 149–197). CRC Press.
+
+Goldsborough, L. G., and Robinson, G. G. C. (1996). Pattern in wetlands. In R. J. Stevenson, M. L. Bothwell, and R. L. Lowe (Eds.), Algal ecology: Freshwater benthic ecosystems (pp. 78–120). Academic Press, San Diego, CA.
+
+Hagerthey, S. E., Bellinger, B. J., Wheeler, K., Gantar, M., & Gaiser, E. (2011). Everglades Periphyton: A Biogeochemical Perspective. Critical Reviews in Environmental Science and Technology, 41(S1), 309–343. 
+
+Kuhl, M., Lassen, C., and Jørgensen, B. B. (1994). Light penetration and light intensity
+in sandy marine sediments measured with irradiance and scalar irradiance fiberoptic
+microprobes. Marine Ecology Progress Series, 105, 139–148.
+
+La Hée, J. M., & Gaiser, E. E. (2012). Benthic diatom assemblages as indicators of water quality in the Everglades and three tropical karstic wetlands. Freshwater Science, 31(1): 205–221. 
+
+Light, S. S., & Dineen, J. W. (1994). Water control in the Everglades: a historical perspective. Everglades: The Ecosystem and Its Restoration, 5: 47–84.
+
+McCormick P.V., Newman S., Miao S., Gawlik D.E., Marley D., Reddy K.R. & Fontaine T.D. (2002) Effects of anthropogenic phosphorus inputs on the Everglades. In: The Everglades Hydroscape (Eds K. Porter & J. Porter), pp. 83–126. St Lucie Press, Boca Raton
+
+National Park Service. (2018, February 13). Everglades Geology. Retrieved from https://www.nps.gov/ever/learn/nature/evergeology.htm
+
+National Park Service. (2019, May 8). Comprehensive Everglades Restoration Plan (CERP). Retrieved from https://www.nps.gov/ever/learn/nature/cerp.htm
+
+Noe G.B., Childers D.L. & Jones R.D. (2001) Phosphorus biogeochemistry and the impacts of phosphorus enrichment: why is the Everglades so unique? Ecosystems, 4, 603–624.
+
+Slate, J. E., & Stevenson, R. J. (2000). Recent and abrupt environmental change in the Florida Everglades indicated from siliceous microfossils. Wetlands, 20(2): 346–356. 
+
+Slate, J. E., & Stevenson, R. J. (2007). The diatom flora of phosphorus-enriched and unenriched sites in an Everglades marsh. Diatom Research, 22(2): 355–386. 
+
+Sundareshwar, P. V., Upadhayay, S., Abessa, M., Honomichl, S., Berdanier, B., Spaulding, S. A., Sandvik, C., & Trennephl, A. (2011). Didymosphenia geminata: algal blooms in oligotrophic streams and rivers. Geophysical Research Letters, 38(10). 
